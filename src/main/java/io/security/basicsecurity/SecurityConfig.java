@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
         http
                 .formLogin()
-                .loginPage("/loginPage") //사용자 정의 로그인 페이지
+                /*.loginPage("/loginPage") //사용자 정의 로그인 페이지
                 .defaultSuccessUrl("/") //로그인 성공 후 이동 페이지
                 .failureUrl("/loginPage") //로그인 실패 후 이동 페이지
                 .usernameParameter("userId") //아이디 파라미터명 설정
@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         System.out.println("exception : "+exception.getMessage());
                         response.sendRedirect("/login");
                     }
-                })
+                })*/
                 .permitAll();
 
         http
@@ -68,6 +68,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     }
                 })
                 .deleteCookies("remember-me") //로그아웃 후 쿠키 삭제
-                ;
+
+        .and()
+                .rememberMe()
+                .rememberMeParameter("remember")//기본 파라미터명은 remember-me
+                .tokenValiditySeconds(3600) //Default는 14일
+                .userDetailsService(userDetailsService())
+        ;
+
     }
 }
