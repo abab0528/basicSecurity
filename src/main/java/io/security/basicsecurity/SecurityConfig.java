@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -47,8 +48,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         System.out.println("exception : "+exception.getMessage());
                         response.sendRedirect("/login");
                     }
-                })*/
-                .permitAll();
+                })
+                .permitAll()*/
+        ;
 
         http
                 .logout() //로그아웃 처리
@@ -71,9 +73,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         .and()
                 .rememberMe()
-                .rememberMeParameter("remember")//기본 파라미터명은 remember-me
-                .tokenValiditySeconds(3600) //Default는 14일
+                //.rememberMeParameter("remember")//기본 파라미터명은 remember-me
+                //.tokenValiditySeconds(3600) //Default는 14일
                 .userDetailsService(userDetailsService())
+        ;
+
+        http
+                .sessionManagement() //세션 관리기능 작동
+                .maximumSessions(1) //최대 허용가능 세션 수 , -1은 무제한 세션 허용
+                .maxSessionsPreventsLogin(true) //동시로그인 차단, false : 기존 세션 만료(default)
+        ;
+
+        http
+                .sessionManagement()
+                .sessionFixation().changeSessionId() //기본값, none/migrateSession/newSession
+        ;
+
+        http
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) //기본값, Always/Never/Stateless
         ;
 
     }
